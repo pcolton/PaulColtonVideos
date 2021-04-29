@@ -66,6 +66,22 @@ extension FileClient {
       },
 
       saveFile: { url, data in
+
+        #if NEVER
+        // Alternate version using Future, but no explicit .success is possible
+        Deferred {
+          Future<Never, Error> { promise in
+            do {
+              try data.write(to: url)
+              // promise(.success(Never)) // Not possible
+            } catch {
+              promise(.failure(error))
+            }
+          }
+        }
+        .eraseToAnyPublisher()
+        #endif
+
         do {
           try data.write(to: url)
 
